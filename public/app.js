@@ -55,7 +55,7 @@ var createOptionTag = function (text, index) {
 
 var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
-  var bikePointElement = createFeaturedBikePoint(bikePointObject);
+  var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
 }
 
@@ -68,10 +68,32 @@ var renderSingleBikePoint = function(bikePointElement) {
   mainDiv.appendChild(bikePointElement);
 }
 
-var createFeaturedBikePoint = function(bikePointObject) {
+var createListItem = function(bikePointObject) {
   var li = document.createElement('li');
   li.innerText = bikePointObject.commonName;
+  var dockStatusList = createDockStatusList(bikePointObject);
+  li.appendChild(dockStatusList);
   return li;
+};
+
+var createDockStatusList = function (bikePointObject) {
+  var list = document.createElement('ul');
+  var bikesAvailable = document.createElement('li');
+  bikesAvailable.innerText = ` Bikes Available:  ${bikePointObject.additionalProperties[6].value}`;
+  list.appendChild(bikesAvailable);
+  var docksFree = document.createElement('li');
+  docksFree.innerText = `Docks Free: ${bikePointObject.additionalProperties[7].value}`;
+  list.appendChild(docksFree);
+  return list;
 }
+
+
+
+// Make Chart
+
+
+// Make Map
+
+
 
 window.addEventListener('load', app);
