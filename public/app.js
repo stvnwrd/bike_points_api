@@ -53,6 +53,25 @@ var createOptionTag = function (text, index) {
   return option;
 }
 
+var selectBikePoint = function (bikePoints, selectedIndex) {
+  var bikePointObject = bikePoints[selectedIndex];
+  var bikePointElement = createFeaturedBikePoint(bikePointObject);
+  renderSingleBikePoint(bikePointElement);
+}
 
+var renderSingleBikePoint = function(bikePointElement) {
+  var mainDiv = document.getElementById('main');
+  var existingBikePointListItem = document.querySelector('li');
+  if (existingBikePointListItem !== null) {
+    mainDiv.removeChild(existingBikePointListItem);
+  }
+  mainDiv.appendChild(bikePointElement);
+}
+
+var createFeaturedBikePoint = function(bikePointObject) {
+  var li = document.createElement('li');
+  li.innerText = bikePointObject.commonName;
+  return li;
+}
 
 window.addEventListener('load', app);
