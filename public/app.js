@@ -15,6 +15,7 @@ const requestComplete = function() {
   const jsonString = this.responseText;
   const bikePointsData = JSON.parse(jsonString);
   renderDropDown(bikePointsData);
+  // initialize();
 };
 
 
@@ -57,6 +58,9 @@ var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
   var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
+  initialize(bikePointObject);
+  // goToSelectedBikePoint(bikePointObject);
+
 }
 
 var renderSingleBikePoint = function(bikePointElement) {
@@ -87,12 +91,38 @@ var createDockStatusList = function (bikePointObject) {
   return list;
 }
 
+// Create a broken dock alert
+// var docksResponding = (NbBike + NbEmptyDocks)
+// var dockDiscrepancy = NbDocks - docksResponding;
+// if docksDiscprepancy = 0 return
+//  docksDiscprepancy >=1 message = "Docks Out of Service: ${docksDiscprepancy}"
+// docksDiscprepancy <= -1 message = "Engineers have been notified of a potential issue with this Bike Point."
+
+
+
+// Make Map
+
+var initialize = function(bikePointObject){
+  var mapDiv = document.getElementById('main-map');
+  var center = {lat: bikePointObject.lat, lng: bikePointObject.lon};
+  var mainMap = new MapWrapper(mapDiv, center, 16);
+
+
+
+
+  // mainMap.googleMap.setCenter(selectedBikePoint);
+  mainMap.addInfoWindow(center, `<h3>${bikePointObject.commonName}</h3><br><h4>Bikes Available: ${bikePointObject.additionalProperties[6].value}<br>Docks Free: ${bikePointObject.additionalProperties[7].value}</h4>`);
+
+}
+
+
+
 
 
 // Make Chart
 
 
-// Make Map
+
 
 
 

@@ -1,0 +1,9 @@
+li {
+  padding: 2px;
+  margin: 2px;
+}
+
+#main-map {
+  width: 500px;
+  height: 500px;
+}
