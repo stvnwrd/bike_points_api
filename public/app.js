@@ -58,7 +58,7 @@ var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
   var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
-  // findPostCode(bikePointObject);
+  findPostCode(bikePointObject);
   findAirQuality();
   initializeMap(bikePointObject);
   makeChart(bikePointObject);
@@ -117,41 +117,33 @@ var findAirQuality = function () {
 const renderAirQualityData = function(airQualityData) {
   var mainDiv = document.getElementById('main');
   var foundAirQuality = document.createElement('li');
-  foundAirQuality.innerText = `Air Quality:  ${airQualityData.updatePeriod}`;
+  foundAirQuality.innerText = `Air Quality:  ${airQualityData.currentForecast[0].forecastSummary}`;
   mainDiv.appendChild(foundAirQuality);
 }
 
 // Get postcode for Bike Point
 
-const findPostCode = function(bikePointObject){
-  const pcLat = bikePointObject.lat;
-  const pcLng = bikePointObject.lon;
-  // var postCodeUrl = `https://api.postcodes.io/postcodes?lon=${pcLng}&lat=${pcLat}`;
-  const postCodeUrl = `https://api.postcodes.io/postcodes?lon=-.2&lat=51`;
 
-  makePCRequest(postCodeUrl, pcRequestComplete);
+var findPostCode = function (bikePointObject) {
+  // var pcLat = bikePointObject.lat;
+  // var pcLng = bikePointObject.lon;
+  var postCodeUrl = 'https://api.postcodes.io/postcodes?lon=-0.10997&lat=51.529163';
+  var postCodeRequest = new XMLHttpRequest();
+  postCodeRequest.open('GET', postCodeUrl);
+
+  postCodeRequest.addEventListener('load', function () {
+    var postCodeData = JSON.parse(postCodeRequest.responseText);
+    renderPostCodeData(postCodeData);
+  });
+  postCodeRequest.send();
 };
 
-const makePCRequest = function(postCodeUrl, callback) {
-  const pcRequest = new XMLHttpRequest();
-  pcRequest.open("GET", postCodeUrl);
-  pcRequest.addEventListener('load', callback);
-  pcRequest.send();
-};
-
-const pcRequestComplete = function() {
-  if(this.status !== 200) return;
-  const pcJsonString = this.responseText;
-  const postCodeData = JSON.parse(pcJsonString);
-  renderPostCodeData(postCodeData);
-};
-
-const renderPostCodeData = function(postCodeData) {
+var renderPostCodeData = function(postCodeData) {
   var mainDiv = document.getElementById('main');
   var foundPostCode = document.createElement('li');
-  foundPostCode.innerText = `Post Code:  ${postCodeData.result.postcode}`;
+  foundPostCode.innerText = `Post Code:  ${postCodeData.result[0].postcode}`;
   mainDiv.appendChild(foundPostCode);
-}
+};
 
 
 
