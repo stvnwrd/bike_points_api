@@ -58,7 +58,7 @@ var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
   var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
-  // findPostCode(bikePointObject);
+  findPostCode(bikePointObject);
   findAirQuality();
   initializeMap(bikePointObject);
   makeChart(bikePointObject);
@@ -76,7 +76,7 @@ var renderSingleBikePoint = function(bikePointElement) {
 
 var createListItem = function(bikePointObject) {
   var list = document.createElement('ul');
-  var name = document.createElement('h3');
+  var name = document.createElement('h2');
   name.innerText = bikePointObject.commonName;
   list.appendChild(name);
   var bikesAvailable = document.createElement('li');
@@ -106,12 +106,22 @@ var findPostCode = function (bikePointObject) {
 };
 
 
+
+
 var renderPostCodeData = function(postCodeData) {
-  var mainDiv = document.getElementById('main');
-  var foundPostCode = document.createElement('li');
+
+  var postCodeDiv = document.getElementById('post-code');
+  var existingPostCodeItem = document.querySelector('h3');
+
+  if (existingPostCodeItem !== null) {
+    postCodeDiv.removeChild(existingPostCodeItem);
+  }
+  var foundPostCode = document.createElement('h3');
   foundPostCode.innerText = `Post Code:  ${postCodeData.result[0].postcode}`;
-  mainDiv.appendChild(foundPostCode);
-};
+
+  postCodeDiv.appendChild(foundPostCode);
+}
+
 
 
 
@@ -147,6 +157,9 @@ var renderAirQualityData = function(airQualityData) {
   if (existingAirQualityItem !== null) {
     airQualityDiv.removeChild(existingAirQualityItem);
   }
+
+  var foundAirQuality = document.createElement('p');
+  foundAirQuality.innerText = `Air Quality:  ${airQualityData.currentForecast[0].forecastSummary}`;
 
   airQualityDiv.appendChild(foundAirQuality);
 }
@@ -219,6 +232,7 @@ var makeChart = function(bikePointObject){
         color: 'rgb(71, 78, 94)'
       }
     }
+
   };
 
   var chart = new google.visualization.BarChart(document.getElementById('chart-div'));
