@@ -58,7 +58,7 @@ var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
   var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
-  findPostCode(bikePointObject);
+  // findPostCode(bikePointObject);
   findAirQuality();
   initializeMap(bikePointObject);
   makeChart(bikePointObject);
@@ -88,6 +88,30 @@ var createListItem = function(bikePointObject) {
   return list;
 };
 
+// Get postcode for Bike Point
+
+
+var findPostCode = function (bikePointObject) {
+  var pcLat = bikePointObject.lat;
+  var pcLng = bikePointObject.lon;
+  var postCodeUrl = `https://api.postcodes.io/postcodes?lon=${bikePointObject.lon}&lat=${bikePointObject.lat}`;
+  var postCodeRequest = new XMLHttpRequest();
+  postCodeRequest.open('GET', postCodeUrl);
+
+  postCodeRequest.addEventListener('load', function () {
+    var postCodeData = JSON.parse(postCodeRequest.responseText);
+    renderPostCodeData(postCodeData);
+  });
+  postCodeRequest.send();
+};
+
+
+var renderPostCodeData = function(postCodeData) {
+  var mainDiv = document.getElementById('main');
+  var foundPostCode = document.createElement('li');
+  foundPostCode.innerText = `Post Code:  ${postCodeData.result[0].postcode}`;
+  mainDiv.appendChild(foundPostCode);
+};
 
 
 
@@ -114,36 +138,19 @@ var findAirQuality = function () {
 };
 
 
-const renderAirQualityData = function(airQualityData) {
-  var mainDiv = document.getElementById('main');
-  var foundAirQuality = document.createElement('li');
+var renderAirQualityData = function(airQualityData) {
+  var foundAirQuality = document.createElement('p');
   foundAirQuality.innerText = `Air Quality:  ${airQualityData.currentForecast[0].forecastSummary}`;
-  mainDiv.appendChild(foundAirQuality);
+  var airQualityDiv = document.getElementById('air-quality');
+  var existingAirQualityItem = document.querySelector('p');
+
+  if (existingAirQualityItem !== null) {
+    airQualityDiv.removeChild(existingAirQualityItem);
+  }
+
+  airQualityDiv.appendChild(foundAirQuality);
 }
 
-// Get postcode for Bike Point
-
-
-var findPostCode = function (bikePointObject) {
-  // var pcLat = bikePointObject.lat;
-  // var pcLng = bikePointObject.lon;
-  var postCodeUrl = 'https://api.postcodes.io/postcodes?lon=-0.10997&lat=51.529163';
-  var postCodeRequest = new XMLHttpRequest();
-  postCodeRequest.open('GET', postCodeUrl);
-
-  postCodeRequest.addEventListener('load', function () {
-    var postCodeData = JSON.parse(postCodeRequest.responseText);
-    renderPostCodeData(postCodeData);
-  });
-  postCodeRequest.send();
-};
-
-var renderPostCodeData = function(postCodeData) {
-  var mainDiv = document.getElementById('main');
-  var foundPostCode = document.createElement('li');
-  foundPostCode.innerText = `Post Code:  ${postCodeData.result[0].postcode}`;
-  mainDiv.appendChild(foundPostCode);
-};
 
 
 
@@ -170,14 +177,48 @@ var makeChart = function(bikePointObject){
 
   function drawChart(){
     var data = google.visualization.arrayToDataTable([
-      ['Dock Status', 'Bikes', 'Empty', 'Out of Order'],
-      ['Dock Status', Number(bikePointObject.additionalProperties[6].value), Number(bikePointObject.additionalProperties[7].value), (Number(bikePointObject.additionalProperties[8].value) - (Number(bikePointObject.additionalProperties[6].value) + Number(bikePointObject.additionalProperties[7].value)))]
+      ['Dock Status', 'Bikes', 'Free Docks', 'Out of Order'],
+      ['', Number(bikePointObject.additionalProperties[6].value), Number(bikePointObject.additionalProperties[7].value), (Number(bikePointObject.additionalProperties[8].value) - (Number(bikePointObject.additionalProperties[6].value) + Number(bikePointObject.additionalProperties[7].value)))]
     ]);
 
-    var options = {'title': 'Bikes Available',
-    'width': 400,
+    var options = {'title': 'Bikes/Docks',
+    'width': 500,
     'height': 300,
-    isStacked: 'absolute'
+    backgroundColor: 'becae0',
+    isStacked: 'absolute',
+    colors:['rgb(5, 160, 238)','rgb(131, 145, 179)','rgb(200, 109, 136)'],
+    titleTextStyle: {
+      color: 'rgb(71, 78, 94)'
+    },
+    hAxis: {
+      textStyle: {
+        color: 'rgb(71, 78, 94)'
+      },
+      titleTextStyle: {
+        color: 'rgb(71, 78, 94)'
+      }
+    },
+    yAxis: {
+      textStyle: {
+        color: 'rgb(71, 78, 94)'
+      },
+      titleTextStyle: {
+        color: 'rgb(71, 78, 94)'
+      }
+    },
+    vAxis: {
+      textStyle: {
+        color: 'rgb(71, 78, 94)'
+      },
+      titleTextStyle: {
+        color: 'rgb(71, 78, 94)'
+      }
+    },
+    legend: {
+      textStyle: {
+        color: 'rgb(71, 78, 94)'
+      }
+    }
   };
 
   var chart = new google.visualization.BarChart(document.getElementById('chart-div'));
@@ -187,7 +228,13 @@ var makeChart = function(bikePointObject){
 
 
 
-
+// var options = {
+//     title: 'title',
+//     width: 310,
+//     height: 260,
+//     backgroundColor: '#E4E4E4',
+//
+// };
 
 
 window.addEventListener('load', app);

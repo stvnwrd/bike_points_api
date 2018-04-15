@@ -1,7 +1,8 @@
 
-body {
+body > *{
   font-family: arial;
   margin: 0 auto;
+    color: rgb(71, 78, 94);
 
 }
 
@@ -32,16 +33,29 @@ body {
 
 main {
   grid-column: 1/2;
-  padding-top: 80px;
-  padding-left: 60px;
+  grid-row: 2/3;
+
+  padding-top: 60px;
+  padding-left: 85px;
+  background-color: rgb(190, 202, 224);
 }
 
+select {
+   background: transparent;
+   width: 268px;
+   font-size: 16px;
+   line-height: 1;
+   border-radius: 0;
+   height: 34px;
+   border: 2px solid;
+   border-color: rgb(71, 78, 94);
+}
 
 
 ul {
   list-style: none;
   padding-top: 20px;
-  padding-left: 0;
+  padding-left: 5px;
 }
 
 li {
@@ -50,25 +64,56 @@ li {
   list-style-type: none;
 }
 
+
+#chart-div {
+  grid-column: 1/2;
+  grid-row: 3/4;
+  /* padding-top: 10px; */
+  /* padding-left: 60px; */
+  /* padding-right: 40px; */
+  background-color: rgb(190, 202, 224);
+
+}
+
+
+
 #main-map {
   grid-column: 2/13;
-  /* width: 500px; */
+  grid-row: 2/4;
+  height: 600px;
+  background-color: rgb(190, 202, 224);
+}
+
+
+#air-quality{
+
+  grid-column: 1/13;
+  grid-row: 4/5;
+  padding-top: 25px;
+  padding-left: 80px;
+  /* color: white; */;
+  color: rgb(190, 202, 224);
+  text-align: center;
+  background-color: rgb(5, 160, 238);
+}
+
+
+
+#other-photo {
+  grid-column: 1/9;
+  grid-row: 5/6;
+  background-image: url("../pexels-photo-248762.jpeg");
+  background-size: contain;
+  background-repeat: no-repeat;
   height: 500px;
 }
 
-#other-photo {
-  grid-column: 1/4;
-  background-image: url("../pexels-photo-248762.jpeg");
-  background-size: cover;
-}
 
-#chart-div {
-  grid-column: 8/13;
-
-
-}
 
 footer {
   grid-column: 1/13;
   text-align: center;
+  padding-top: 30px;
+  background-color: rgb(38, 45, 64);
+
 }
