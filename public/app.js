@@ -58,14 +58,16 @@ var selectBikePoint = function (bikePoints, selectedIndex) {
   var bikePointObject = bikePoints[selectedIndex];
   var bikePointElement = createListItem(bikePointObject);
   renderSingleBikePoint(bikePointElement);
-  initialize(bikePointObject);
-  // goToSelectedBikePoint(bikePointObject);
+  // findPostCode(bikePointObject);
+  findAirQuality();
+  initializeMap(bikePointObject);
+  makeChart(bikePointObject);
 
 }
 
 var renderSingleBikePoint = function(bikePointElement) {
   var mainDiv = document.getElementById('main');
-  var existingBikePointListItem = document.querySelector('li');
+  var existingBikePointListItem = document.querySelector('ul');
   if (existingBikePointListItem !== null) {
     mainDiv.removeChild(existingBikePointListItem);
   }
@@ -73,23 +75,21 @@ var renderSingleBikePoint = function(bikePointElement) {
 }
 
 var createListItem = function(bikePointObject) {
-  var li = document.createElement('li');
-  li.innerText = bikePointObject.commonName;
-  var dockStatusList = createDockStatusList(bikePointObject);
-  li.appendChild(dockStatusList);
-  return li;
-};
-
-var createDockStatusList = function (bikePointObject) {
   var list = document.createElement('ul');
+  var name = document.createElement('h3');
+  name.innerText = bikePointObject.commonName;
+  list.appendChild(name);
   var bikesAvailable = document.createElement('li');
-  bikesAvailable.innerText = ` Bikes Available:  ${bikePointObject.additionalProperties[6].value}`;
+  bikesAvailable.innerText = `Bikes Available:  ${bikePointObject.additionalProperties[6].value}`;
   list.appendChild(bikesAvailable);
   var docksFree = document.createElement('li');
   docksFree.innerText = `Docks Free: ${bikePointObject.additionalProperties[7].value}`;
   list.appendChild(docksFree);
   return list;
-}
+};
+
+
+
 
 // Create a broken dock alert
 // var docksResponding = (NbBike + NbEmptyDocks)
@@ -99,20 +99,71 @@ var createDockStatusList = function (bikePointObject) {
 // docksDiscprepancy <= -1 message = "Engineers have been notified of a potential issue with this Bike Point."
 
 
+// Request and process Air Quality Data
+
+var findAirQuality = function () {
+  var airQualityUrl = 'https://api.tfl.gov.uk/AirQuality';
+  var airQualityRequest = new XMLHttpRequest();
+  airQualityRequest.open('GET', airQualityUrl);
+
+  airQualityRequest.addEventListener('load', function () {
+    var airQualityData = JSON.parse(airQualityRequest.responseText);
+    renderAirQualityData(airQualityData);
+  });
+  airQualityRequest.send();
+};
+
+
+const renderAirQualityData = function(airQualityData) {
+  var mainDiv = document.getElementById('main');
+  var foundAirQuality = document.createElement('li');
+  foundAirQuality.innerText = `Air Quality:  ${airQualityData.updatePeriod}`;
+  mainDiv.appendChild(foundAirQuality);
+}
+
+// Get postcode for Bike Point
+
+const findPostCode = function(bikePointObject){
+  const pcLat = bikePointObject.lat;
+  const pcLng = bikePointObject.lon;
+  // var postCodeUrl = `https://api.postcodes.io/postcodes?lon=${pcLng}&lat=${pcLat}`;
+  const postCodeUrl = `https://api.postcodes.io/postcodes?lon=-.2&lat=51`;
+
+  makePCRequest(postCodeUrl, pcRequestComplete);
+};
+
+const makePCRequest = function(postCodeUrl, callback) {
+  const pcRequest = new XMLHttpRequest();
+  pcRequest.open("GET", postCodeUrl);
+  pcRequest.addEventListener('load', callback);
+  pcRequest.send();
+};
+
+const pcRequestComplete = function() {
+  if(this.status !== 200) return;
+  const pcJsonString = this.responseText;
+  const postCodeData = JSON.parse(pcJsonString);
+  renderPostCodeData(postCodeData);
+};
+
+const renderPostCodeData = function(postCodeData) {
+  var mainDiv = document.getElementById('main');
+  var foundPostCode = document.createElement('li');
+  foundPostCode.innerText = `Post Code:  ${postCodeData.result.postcode}`;
+  mainDiv.appendChild(foundPostCode);
+}
+
+
 
 // Make Map
 
-var initialize = function(bikePointObject){
+var initializeMap = function(bikePointObject){
   var mapDiv = document.getElementById('main-map');
   var center = {lat: bikePointObject.lat, lng: bikePointObject.lon};
   var mainMap = new MapWrapper(mapDiv, center, 16);
 
 
-
-
-  // mainMap.googleMap.setCenter(selectedBikePoint);
-  mainMap.addInfoWindow(center, `<h3>${bikePointObject.commonName}</h3><br><h4>Bikes Available: ${bikePointObject.additionalProperties[6].value}<br>Docks Free: ${bikePointObject.additionalProperties[7].value}</h4>`);
-
+  mainMap.addInfoWindow(center, `<h3>${bikePointObject.commonName}</h3><h4><br>Bikes Available: ${bikePointObject.additionalProperties[6].value}<br>Docks Free: ${bikePointObject.additionalProperties[7].value}</h4>`);
 }
 
 
@@ -120,6 +171,27 @@ var initialize = function(bikePointObject){
 
 
 // Make Chart
+
+var makeChart = function(bikePointObject){
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart(){
+    var data = google.visualization.arrayToDataTable([
+      ['Dock Status', 'Bikes', 'Empty', 'Out of Order'],
+      ['Dock Status', Number(bikePointObject.additionalProperties[6].value), Number(bikePointObject.additionalProperties[7].value), (Number(bikePointObject.additionalProperties[8].value) - (Number(bikePointObject.additionalProperties[6].value) + Number(bikePointObject.additionalProperties[7].value)))]
+    ]);
+
+    var options = {'title': 'Bikes Available',
+    'width': 400,
+    'height': 300,
+    isStacked: 'absolute'
+  };
+
+  var chart = new google.visualization.BarChart(document.getElementById('chart-div'));
+  chart.draw(data, options);
+}
+};
 
 
 
