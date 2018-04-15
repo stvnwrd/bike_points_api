@@ -114,7 +114,7 @@ h2{
 
 
 #other-photo {
-  grid-column: 1/9;
+  grid-column: 1/6;
   grid-row: 6/7;
   background-image: url("../pexels-photo-248762.jpeg");
   background-size: contain;
@@ -123,11 +123,24 @@ h2{
 }
 
 #daylight {
-  grid-column: 9/13;
+  grid-column: 6/13;
   grid-row: 6/7;
+  font-size: 48px;
+  text-align: center;
+  margin-top: 105px;
 }
 
+a:link {
+  color: rgb(71, 78, 94);
+}
 
+a:visited {
+  color: rgb(71, 78, 94);
+}
+
+a:hover {
+  color: white;
+}
 
 footer {
   grid-column: 1/13;
