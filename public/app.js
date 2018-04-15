@@ -15,7 +15,6 @@ const requestComplete = function() {
   const jsonString = this.responseText;
   const bikePointsData = JSON.parse(jsonString);
   renderDropDown(bikePointsData);
-  // initialize();
 };
 
 
@@ -89,8 +88,8 @@ var createListItem = function(bikePointObject) {
   return list;
 };
 
-// Get postcode for Bike Point
 
+// Get postcode for Bike Point
 
 var findPostCode = function (bikePointObject) {
   var pcLat = bikePointObject.lat;
@@ -125,13 +124,14 @@ var renderPostCodeData = function(postCodeData) {
 
 
 
-
 // Create a broken dock alert
 // var docksResponding = (NbBike + NbEmptyDocks)
 // var dockDiscrepancy = NbDocks - docksResponding;
 // if docksDiscprepancy = 0 return
 //  docksDiscprepancy >=1 message = "Docks Out of Service: ${docksDiscprepancy}"
 // docksDiscprepancy <= -1 message = "Engineers have been notified of a potential issue with this Bike Point."
+
+
 
 
 // Request and process Air Quality Data
@@ -165,14 +165,14 @@ var renderAirQualityData = function(airQualityData) {
   airQualityDiv.appendChild(foundAirQuality);
 }
 
-// Get Daylight Times for Bike Point
 
+// Get Daylight Times for Bike Point
 
 var findDayLight = function (bikePointObject) {
   var pcLat = bikePointObject.lat;
   var pcLng = bikePointObject.lon;
   var dayLightUrl = `https://api.sunrise-sunset.org/json?lat=${bikePointObject.lat}&lng=${bikePointObject.lon}`;
-  // var postCodeUrl ="https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400";
+
   var dayLightRequest = new XMLHttpRequest();
   dayLightRequest.open('GET', dayLightUrl);
 
@@ -190,15 +190,10 @@ var renderDayLightData = function(dayLightData) {
 
   var dayLightDiv = document.getElementById('daylight');
   var existingDayLightArray = document.querySelectorAll('h6');
-  // debugger;
   if (existingDayLightArray !== null) {
     for (var i = 0; i < existingDayLightArray.length; i++) {
       dayLightDiv.removeChild(existingDayLightArray[i]);
     }
-    // existingDayLightArray.forEach(function(item){
-    //   dayLightDiv.removeChild(existingDayLightArray[item]);
-    // })
-    // dayLightDiv.removeChild(existingDayLightItem);
   }
   var foundSunrise = document.createElement('h6');
   foundSunrise.innerText = `Sunrise: ${dayLightData.results.sunrise}`;
@@ -208,9 +203,6 @@ var renderDayLightData = function(dayLightData) {
   dayLightDiv.appendChild(foundSunrise);
   dayLightDiv.appendChild(foundSunset);
 }
-
-
-
 
 
 
@@ -224,8 +216,6 @@ var initializeMap = function(bikePointObject){
 
   mainMap.addInfoWindow(center, `<h3>${bikePointObject.commonName}</h3><h4><br>Bikes Available: ${bikePointObject.additionalProperties[6].value}<br>Docks Free: ${bikePointObject.additionalProperties[7].value}</h4>`);
 }
-
-
 
 
 
@@ -287,15 +277,6 @@ var makeChart = function(bikePointObject){
 }
 };
 
-
-
-// var options = {
-//     title: 'title',
-//     width: 310,
-//     height: 260,
-//     backgroundColor: '#E4E4E4',
-//
-// };
 
 
 window.addEventListener('load', app);
