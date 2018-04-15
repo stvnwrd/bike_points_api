@@ -117,7 +117,7 @@ var renderPostCodeData = function(postCodeData) {
     postCodeDiv.removeChild(existingPostCodeItem);
   }
   var foundPostCode = document.createElement('h3');
-  foundPostCode.innerText = `Post Code:  ${postCodeData.result[0].postcode}`;
+  foundPostCode.innerText = `${postCodeData.result[0].postcode}`;
 
   postCodeDiv.appendChild(foundPostCode);
 }
